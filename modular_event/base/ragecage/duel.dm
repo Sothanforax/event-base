@@ -6,12 +6,22 @@
 	var/list/datum/duel_member/members = list()
 	/// Mob who created the group
 	var/mob/living/carbon/human/owner = null
+	/// If we're participating in an active duel at the moment
+	var/datum/arena_duel/active_duel = null
 
-/// Stores info about the mob and their belongings, mostly to avoid list jank
+/datum/duel_group/Destroy(force)
+	. = ..()
+	owner = null
+	active_duel = null
+	QDEL_LIST(members)
+
+/// Stores info about the mob and their belongings
 /datum/duel_member
 	var/mob/living/carbon/human/owner = null
 	/// Assoc list of items -> slot/storage item
 	var/list/obj/item/belongings = list()
+	/// Duel group we belong to
+	var/datum/duel_group/group = null
 
 /datum/duel_member/New(mob/living/carbon/human/new_owner)
 	. = ..()
@@ -20,11 +30,13 @@
 
 /datum/duel_member/Destroy(force)
 	owner = null
+	group = null
 	belongings.Cut()
 	return ..()
 
 /datum/duel_member/proc/owner_deleted()
 	SIGNAL_HANDLER
+	group?.active_duel?.duelant_death(src)
 	qdel(src)
 
 /// Track all of mob's equipment so we can give it back to them when they get TPed out
@@ -42,21 +54,58 @@
 
 /// Return all of mob's equipment and delete whatever doesn't fit into them
 /datum/duel_member/proc/return_equipment()
+	var/turf/owner_turf = get_turf(owner)
 	for (var/obj/item/thing as anything in belongings)
 		if (!isatom(belongings[thing]))
-			owner.equip_to_slot_or_del(thing, belongings[thing])
+			if (!owner.equip_to_slot_if_possible(thing, belongings[thing]))
+				thing.forceMove(owner_turf)
 			continue
 
 		var/atom/storage = belongings[thing]
 		if (!storage.atom_storage?.attempt_insert(thing, null, TRUE, STORAGE_FULLY_LOCKED, FALSE))
-			qdel(thing) // don't steal others' stuff
+			thing.forceMove(owner_turf)
 
 	belongings.Cut()
+
+/datum/duel_member/proc/start_duel(datum/arena_duel/active_duel, obj/effect/landmark/ragecage/spawn_point)
+	to_chat(owner, span_userdanger("Lights, camera, stage! The arena is yours!"))
+	store_equipment()
+	owner.forceMove(get_turf(spawn_point))
+	owner.revive(ADMIN_HEAL_ALL, force_grab_ghost = TRUE)
+	RegisterSignal(owner, COMSIG_MOB_STATCHANGE, PROC_REF(on_stat_changed))
+
+/datum/duel_member/proc/end_duel(obj/effect/landmark/ragecage_exit/exit)
+	if (!exit)
+		stack_trace("Duel ended with no or not enough exit landmarks!")
+		exit = locate() in GLOB.landmarks_list // don't softlock people
+
+	owner.revive(ADMIN_HEAL_ALL, force_grab_ghost = TRUE)
+	owner.forceMove(get_turf(exit))
+	return_equipment()
+	UnregisterSignal(owner, COMSIG_MOB_STATCHANGE)
+
+/datum/duel_member/proc/on_stat_changed(mob/living/source, new_stat, old_stat)
+	SIGNAL_HANDLER
+	if (old_stat != DEAD && new_stat == DEAD && !QDELETED(source))
+		group?.active_duel?.duelant_death(src)
 
 /datum/arena_duel
 	// Two participating groups
 	var/datum/duel_group/first_group = null
 	var/datum/duel_group/second_group = null
+
+/datum/arena_duel/New(datum/duel_group/first, datum/duel_group/second)
+	. = ..()
+	first_group = first
+	first_group.active_duel = src
+	second_group = second
+	second_group.active_duel = src
+	start_fight()
+
+/datum/arena_duel/Destroy(force)
+	. = ..()
+	QDEL_NULL(first_group)
+	QDEL_NULL(second_group)
 
 /datum/arena_duel/proc/start_fight()
 	var/list/obj/effect/landmark/ragecage/first_team = list()
@@ -93,3 +142,28 @@
 	// Just in case
 	if (!loser_team)
 		return
+
+	for (var/datum/duel_member/member as anything in loser_team.members - just_died)
+		if (member.owner?.stat != DEAD)
+			return
+
+	// No living team members remain, end the fight
+	end_fight(loser_team)
+
+/datum/arena_duel/proc/end_fight(datum/duel_group/loser_group)
+	var/list/obj/effect/landmark/ragecage_exit/exits = list()
+	for (var/obj/effect/landmark/ragecage_exit/mark in GLOB.landmarks_list)
+		exits += mark
+
+	var/datum/duel_group/winner_group = loser_group == first_group ? second_group : first_group
+	for (var/datum/duel_member/winner as anything in winner_group.members)
+		var/mob/living/carbon/human/winner_mob = winner.owner
+		to_chat(winner_mob, span_green(span_big("You have won the match!")))
+		winner.end_duel(pick_n_take(exits))
+
+	for (var/datum/duel_member/loser as anything in loser_group.members)
+		var/mob/living/carbon/human/loser_mob = loser.owner
+		to_chat(loser_mob, span_red(span_big("You have lost the match!")))
+		loser.end_duel(pick_n_take(exits))
+
+	qdel(src)
