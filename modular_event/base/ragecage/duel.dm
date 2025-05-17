@@ -8,11 +8,18 @@
 	var/mob/living/carbon/human/owner = null
 	/// If we're participating in an active duel at the moment
 	var/datum/arena_duel/active_duel = null
+	/// Console that created us
+	var/obj/machinery/computer/ragecage_signup/console = null
 
 /datum/duel_group/Destroy(force)
 	. = ..()
 	owner = null
 	active_duel = null
+	if (src in console?.duels)
+		console.duels -= src
+	else
+		console.trios -= src
+	console = null
 	QDEL_LIST(members)
 
 /// Stores info about the mob and their belongings
@@ -93,9 +100,12 @@
 	// Two participating groups
 	var/datum/duel_group/first_group = null
 	var/datum/duel_group/second_group = null
+	/// Console that created us
+	var/obj/machinery/computer/ragecage_signup/console = null
 
-/datum/arena_duel/New(datum/duel_group/first, datum/duel_group/second)
+/datum/arena_duel/New(obj/machinery/computer/ragecage_signaup/new_console, datum/duel_group/first, datum/duel_group/second)
 	. = ..()
+	console = new_console
 	first_group = first
 	first_group.active_duel = src
 	second_group = second
@@ -106,6 +116,8 @@
 	. = ..()
 	QDEL_NULL(first_group)
 	QDEL_NULL(second_group)
+	console.active_duel = null
+	console = null
 
 /datum/arena_duel/proc/start_fight()
 	var/list/obj/effect/landmark/ragecage/first_team = list()
@@ -156,12 +168,12 @@
 		exits += mark
 
 	var/datum/duel_group/winner_group = loser_group == first_group ? second_group : first_group
-	for (var/datum/duel_member/winner as anything in winner_group.members)
+	for (var/datum/duel_member/winner as anything in winner_group?.members)
 		var/mob/living/carbon/human/winner_mob = winner.owner
 		to_chat(winner_mob, span_green(span_big("You have won the match!")))
 		winner.end_duel(pick_n_take(exits))
 
-	for (var/datum/duel_member/loser as anything in loser_group.members)
+	for (var/datum/duel_member/loser as anything in (winner_group ? loser_group.members : first_group.members + second_group.members)) // so in case the duel ends without a winner, both sides lose
 		var/mob/living/carbon/human/loser_mob = loser.owner
 		to_chat(loser_mob, span_red(span_big("You have lost the match!")))
 		loser.end_duel(pick_n_take(exits))
