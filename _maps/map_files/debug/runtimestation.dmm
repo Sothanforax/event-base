@@ -618,11 +618,8 @@
 /turf/open/floor/iron,
 /area/station/construction)
 "dN" = (
-/obj/machinery/navbeacon{
-	location = "1-Southwest";
-	codes_txt = "patrol;next_patrol=2-Northwest"
-	},
-/turf/open/floor/iron,
+/obj/effect/spawner/structure/window/reinforced,
+/turf/open/floor/plating,
 /area/station/commons/storage/primary)
 "dP" = (
 /obj/effect/turf_decal/stripes/line{
@@ -1222,6 +1219,10 @@
 /obj/structure/server,
 /turf/open/floor/iron/dark,
 /area/station/science/explab)
+"kG" = (
+/obj/effect/landmark/ragecage,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "kS" = (
 /turf/closed/wall/r_wall,
 /area/station/medical/chemistry)
@@ -1391,14 +1392,6 @@
 "qQ" = (
 /turf/open/floor/engine,
 /area/station/cargo/miningoffice)
-"qR" = (
-/obj/effect/landmark/start,
-/obj/machinery/navbeacon{
-	codes_txt = "delivery;dir=4";
-	location = "Center"
-	},
-/turf/open/floor/iron,
-/area/station/commons/storage/primary)
 "rh" = (
 /obj/machinery/door/airlock,
 /obj/structure/cable,
@@ -1844,6 +1837,10 @@
 /obj/machinery/component_printer,
 /turf/open/floor/iron/dark,
 /area/station/science/explab)
+"Db" = (
+/obj/effect/landmark/ragecage_exit,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "Df" = (
 /obj/machinery/light/directional/east,
 /obj/item/integrated_circuit/loaded/hello_world,
@@ -1962,6 +1959,10 @@
 /obj/effect/mapping_helpers/airalarm/unlocked,
 /turf/open/floor/iron,
 /area/station/command/bridge)
+"Fl" = (
+/obj/effect/landmark/ragecage/second,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "Fy" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /turf/open/floor/iron,
@@ -2370,6 +2371,14 @@
 	},
 /turf/open/floor/engine,
 /area/station/cargo/miningoffice)
+"QF" = (
+/obj/machinery/navbeacon{
+	codes_txt = "delivery;dir=4";
+	location = "Center"
+	},
+/obj/effect/landmark/start,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "QM" = (
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
@@ -7500,12 +7509,12 @@ dJ
 wR
 dJ
 dJ
-dJ
-dJ
-dJ
-dJ
 dN
-dJ
+dN
+dN
+dN
+dN
+pY
 dJ
 cS
 Tt
@@ -7591,12 +7600,12 @@ jg
 dq
 dJ
 dJ
-dJ
 dI
+dN
+kG
 dJ
-dJ
-dJ
-dJ
+kG
+dN
 dJ
 gi
 cS
@@ -7683,12 +7692,12 @@ rC
 dr
 dJ
 dJ
-dJ
 dI
+dN
 dJ
+kG
 dJ
-dJ
-dJ
+dN
 dJ
 nT
 cS
@@ -7775,12 +7784,12 @@ Hg
 ds
 dJ
 dJ
-dJ
-dI
-dJ
-dJ
+Db
+dN
 dJ
 dJ
+dJ
+dN
 dJ
 jU
 cS
@@ -7867,12 +7876,12 @@ ay
 dt
 dJ
 dD
-dJ
-qR
+QF
+dN
 dJ
 XZ
 dJ
-dJ
+dN
 dJ
 ea
 cS
@@ -7959,12 +7968,12 @@ pw
 du
 dJ
 dJ
-dJ
-dI
-dJ
-dJ
+Db
+dN
 dJ
 dJ
+dJ
+dN
 dJ
 ZK
 cS
@@ -8051,12 +8060,12 @@ pZ
 dv
 dJ
 dJ
-dJ
 dI
+dN
 dJ
+Fl
 dJ
-dJ
-dJ
+dN
 dJ
 dQ
 cS
@@ -8143,12 +8152,12 @@ Pc
 dw
 dJ
 dJ
-dJ
 dI
+dN
+Fl
 dJ
-dJ
-dJ
-dJ
+Fl
+dN
 dJ
 kf
 cS
@@ -8235,13 +8244,13 @@ jk
 dJ
 JJ
 dJ
-dJ
 yl
-dJ
-dJ
-dJ
+dN
+dN
+dN
+dN
+dN
 pY
-dJ
 dJ
 cS
 fS

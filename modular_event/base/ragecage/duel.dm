@@ -70,9 +70,9 @@
 /datum/duel_member/proc/start_duel(datum/arena_duel/active_duel, obj/effect/landmark/ragecage/spawn_point)
 	to_chat(owner, span_userdanger("Lights, camera, stage! The arena is yours!"))
 	store_equipment()
-	owner.forceMove(get_turf(spawn_point))
 	owner.revive(ADMIN_HEAL_ALL, force_grab_ghost = TRUE)
 	RegisterSignal(owner, COMSIG_MOB_STATCHANGE, PROC_REF(on_stat_changed))
+	owner.forceMove(get_turf(spawn_point))
 
 /datum/duel_member/proc/end_duel(obj/effect/landmark/ragecage_exit/exit)
 	if (!exit)
