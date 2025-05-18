@@ -103,7 +103,7 @@
 	/// Console that created us
 	var/obj/machinery/computer/ragecage_signup/console = null
 
-/datum/arena_duel/New(obj/machinery/computer/ragecage_signaup/new_console, datum/duel_group/first, datum/duel_group/second)
+/datum/arena_duel/New(obj/machinery/computer/ragecage_signup/new_console, datum/duel_group/first, datum/duel_group/second)
 	. = ..()
 	console = new_console
 	first_group = first
