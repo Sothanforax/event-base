@@ -31,3 +31,52 @@
 	if (active_duel)
 		active_duel.end_fight()
 		QDEL_NULL(active_duel)
+
+/obj/machinery/computer/ragecage_signup/ui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "RagecageConsole", name)
+		ui.open()
+
+/obj/machinery/computer/ragecage_signup/ui_data(mob/user)
+	var/list/data = list()
+	var/list/active_data = list()
+
+	var/list/duel_data = list()
+	for (var/datum/duel_group/group as anything in duels)
+		var/list/group_members = list()
+		for (var/datum/duel_member/member as anything in group.members)
+			group_members += list(list(
+				"name" = member.owner.real_name,
+				"dead" = member.owner.stat == DEAD,
+				"owner" = group.owner == member.owner,
+			))
+		var/list/duel_group = list("members" = group_members)
+		duel_data += list(duel_group)
+		if (active_duel?.first_group == group)
+			active_data["firstTeam"] = duel_group
+		else if (active_duel?.second_group == group)
+			active_data["secondTeam"] = duel_group
+
+	data["duelTeams"] = duel_data
+
+	var/list/trio_data = list()
+	for (var/datum/duel_group/group as anything in trios)
+		var/list/group_members = list()
+		for (var/datum/duel_member/member as anything in group.members)
+			group_members += list(list(
+				"name" = member.owner.real_name,
+				"dead" = member.owner.stat == DEAD,
+				"owner" = group.owner == member.owner,
+			))
+		var/list/duel_group = list("members" = group_members)
+		trio_data += list(duel_group)
+		if (active_duel?.first_group == group)
+			active_data["firstTeam"] = duel_group
+		else if (active_duel?.second_group == group)
+			active_data["secondTeam"] = duel_group
+
+	data["trioTeams"] = trio_data
+	if (length(active_data))
+		data["activeDuel"] = active_data
+	return data
