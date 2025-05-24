@@ -578,7 +578,6 @@
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
 "dD" = (
-/obj/effect/landmark/observer_start,
 /obj/structure/plaque/static_plaque/golden/commission,
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
@@ -1665,6 +1664,7 @@
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
 	dir = 4
 	},
+/obj/effect/landmark/start,
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
 "yA" = (
@@ -2376,7 +2376,9 @@
 	codes_txt = "delivery;dir=4";
 	location = "Center"
 	},
-/obj/effect/landmark/start,
+/obj/machinery/computer/ragecage_signup{
+	dir = 1
+	},
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
 "QM" = (
@@ -7508,7 +7510,7 @@ qv
 dJ
 wR
 dJ
-dJ
+dI
 dN
 dN
 dN
@@ -7783,8 +7785,8 @@ uO
 Hg
 ds
 dJ
-dJ
 Db
+dJ
 dN
 dJ
 dJ
@@ -7874,7 +7876,7 @@ QV
 zg
 ay
 dt
-dJ
+Db
 dD
 QF
 dN
@@ -7967,8 +7969,8 @@ cV
 pw
 du
 dJ
-dJ
 Db
+dJ
 dN
 dJ
 dJ

@@ -33,6 +33,7 @@
 		QDEL_NULL(active_duel)
 
 /obj/machinery/computer/ragecage_signup/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "RagecageConsole", name)
@@ -51,7 +52,7 @@
 				"dead" = member.owner.stat == DEAD,
 				"owner" = group.owner == member.owner,
 			))
-		var/list/duel_group = list("members" = group_members)
+		var/list/duel_group = list("members" = group_members, "canJoin" = FALSE)
 		duel_data += list(duel_group)
 		if (active_duel?.first_group == group)
 			active_data["firstTeam"] = duel_group
@@ -69,7 +70,7 @@
 				"dead" = member.owner.stat == DEAD,
 				"owner" = group.owner == member.owner,
 			))
-		var/list/duel_group = list("members" = group_members)
+		var/list/duel_group = list("members" = group_members, "owner" = REF(group.owner), "canJoin" = (length(group_members) < 3))
 		trio_data += list(duel_group)
 		if (active_duel?.first_group == group)
 			active_data["firstTeam"] = duel_group
@@ -77,6 +78,17 @@
 			active_data["secondTeam"] = duel_group
 
 	data["trioTeams"] = trio_data
+
 	if (length(active_data))
 		data["activeDuel"] = active_data
 	return data
+
+/obj/machinery/computer/ragecage_signup/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	. = ..()
+	var/mob/living/carbon/human/user = ui.user
+	if (!istype(user))
+		return
+
+	switch(action)
+		if ("duel_signup")
+
