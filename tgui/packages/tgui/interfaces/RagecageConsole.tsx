@@ -9,6 +9,8 @@ type RagecageData = {
   duelTeams: RagecageTeam[];
   trioTeams: RagecageTeam[];
   joinRequestCooldown: BooleanLike;
+  duelSigned: BooleanLike;
+  trioSigned: BooleanLike;
 };
 
 type RagecageDuel = {
@@ -19,7 +21,7 @@ type RagecageDuel = {
 type RagecageTeam = {
   members: DuelMember[];
   canJoin: BooleanLike;
-  owner?: string;
+  group?: string;
 };
 
 type DuelMember = {
@@ -41,7 +43,7 @@ export function DuelTeam(props: DuelTeamProps) {
         !!team.canJoin && (
           <Button
             disabled={data.joinRequestCooldown}
-            onClick={() => act('request_join', { ref: team.owner })}
+            onClick={() => act('request_join', { ref: team.group })}
           >
             Join Team
           </Button>
@@ -62,7 +64,7 @@ export function DuelTeam(props: DuelTeamProps) {
 
 export function RagecageConsole() {
   const { data, act } = useBackend<RagecageData>();
-  const { activeDuel, duelTeams, trioTeams } = data;
+  const { activeDuel, duelTeams, trioTeams, duelSigned, trioSigned } = data;
 
   return (
     <Window title="Arena Signup Console" width={600} height={300}>
@@ -89,7 +91,15 @@ export function RagecageConsole() {
             <Section
               title="Duel Participants"
               buttons={
-                <Button onClick={() => act('duel_signup')}>Sign Up</Button>
+                duelSigned ? (
+                  <Button color="good" onClick={() => act('duel_signup')}>
+                    Sign Up
+                  </Button>
+                ) : (
+                  <Button color="bad" onClick={() => act('duel_drop')}>
+                    Leave Queue
+                  </Button>
+                )
               }
             >
               {duelTeams.map((team, i) => (
@@ -101,7 +111,15 @@ export function RagecageConsole() {
             <Section
               title="Trio Participants"
               buttons={
-                <Button onClick={() => act('trio_signup')}>Sign Up</Button>
+                trioSigned ? (
+                  <Button color="good" onClick={() => act('trio_signup')}>
+                    Sign Up
+                  </Button>
+                ) : (
+                  <Button color="bad" onClick={() => act('trio_drop')}>
+                    Leave Queue
+                  </Button>
+                )
               }
             >
               {trioTeams.map((team, i) => (

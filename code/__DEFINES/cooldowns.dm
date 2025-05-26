@@ -59,6 +59,8 @@
 // mob cooldowns
 #define COOLDOWN_YAWN_PROPAGATION "yawn_propagation_cooldown"
 
+#define COOLDOWN_ARENA_SIGNUP_REQUEST "arena_signup_request"
+
 //Shared cooldowns for actions
 #define MOB_SHARED_COOLDOWN_1 (1<<0)
 #define MOB_SHARED_COOLDOWN_2 (1<<1)

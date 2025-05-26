@@ -11,6 +11,12 @@
 	/// Console that created us
 	var/obj/machinery/computer/ragecage_signup/console = null
 
+/datum/duel_group/New(mob/living/carbon/human/creator, obj/machinery/computer/ragecage_signup/new_console)
+	. = ..()
+	console = new_console
+	owner = creator
+	members += new /datum/duel_member(creator, src)
+
 /datum/duel_group/Destroy(force)
 	. = ..()
 	owner = null
@@ -30,9 +36,10 @@
 	/// Duel group we belong to
 	var/datum/duel_group/group = null
 
-/datum/duel_member/New(mob/living/carbon/human/new_owner)
+/datum/duel_member/New(mob/living/carbon/human/new_owner, datum/duel_group/new_group)
 	. = ..()
 	owner = new_owner
+	group = new_group
 	RegisterSignal(owner, COMSIG_QDELETING, PROC_REF(owner_deleted))
 
 /datum/duel_member/Destroy(force)
