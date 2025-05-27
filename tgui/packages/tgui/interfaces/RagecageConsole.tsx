@@ -32,10 +32,11 @@ type DuelMember = {
 
 type DuelTeamProps = {
   team: RagecageTeam;
+  trio?: boolean;
 };
 
 export function DuelTeam(props: DuelTeamProps) {
-  const { team } = props;
+  const { team, trio } = props;
   const { data, act } = useBackend<RagecageData>();
   return (
     <Section
@@ -49,12 +50,17 @@ export function DuelTeam(props: DuelTeamProps) {
           </Button>
         )
       }
+      title={
+        !!team.canJoin && `${team.members.find((x) => x.owner)?.name}'s Team`
+      }
     >
       <Stack fill vertical zebra>
         {team.members.map((member) => (
           <Stack.Item key={member.name} textColor={!!member.dead && 'dimgrey'}>
             {member.name}
-            {!!member.owner && <Icon name="crown" color="gold" mr={2} />}
+            {trio && !!member.owner && (
+              <Icon name="crown" color="gold" mr={2} ml={1} />
+            )}
           </Stack.Item>
         ))}
       </Stack>
@@ -67,7 +73,7 @@ export function RagecageConsole() {
   const { activeDuel, duelTeams, trioTeams, duelSigned, trioSigned } = data;
 
   return (
-    <Window title="Arena Signup Console" width={600} height={300}>
+    <Window title="Arena Signup Console" width={600} height={400}>
       <Window.Content>
         {!!activeDuel && (
           <Section title="Active Duel">
@@ -87,11 +93,11 @@ export function RagecageConsole() {
           </Section>
         )}
         <Stack fill>
-          <Stack.Item>
+          <Stack.Item grow>
             <Section
               title="Duel Participants"
               buttons={
-                duelSigned ? (
+                !duelSigned ? (
                   <Button color="good" onClick={() => act('duel_signup')}>
                     Sign Up
                   </Button>
@@ -101,17 +107,18 @@ export function RagecageConsole() {
                   </Button>
                 )
               }
+              fill
             >
               {duelTeams.map((team, i) => (
                 <DuelTeam key={i} team={team} />
               ))}
             </Section>
           </Stack.Item>
-          <Stack.Item>
+          <Stack.Item grow>
             <Section
               title="Trio Participants"
               buttons={
-                trioSigned ? (
+                !trioSigned ? (
                   <Button color="good" onClick={() => act('trio_signup')}>
                     Sign Up
                   </Button>
@@ -121,9 +128,10 @@ export function RagecageConsole() {
                   </Button>
                 )
               }
+              fill
             >
               {trioTeams.map((team, i) => (
-                <DuelTeam key={i} team={team} />
+                <DuelTeam trio key={i} team={team} />
               ))}
             </Section>
           </Stack.Item>
