@@ -50,9 +50,7 @@ export function DuelTeam(props: DuelTeamProps) {
           </Button>
         )
       }
-      title={
-        !!team.canJoin && `${team.members.find((x) => x.owner)?.name}'s Team`
-      }
+      title={`${team.members.find((x) => x.owner)?.name}'s Team`}
     >
       <Stack fill vertical zebra>
         {team.members.map((member) => (
