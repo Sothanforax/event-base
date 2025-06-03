@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button, Icon, Section, Stack } from 'tgui-core/components';
 import { BooleanLike } from 'tgui-core/react';
 
@@ -68,10 +69,11 @@ export function DuelTeam(props: DuelTeamProps) {
 
 export function RagecageConsole() {
   const { data, act } = useBackend<RagecageData>();
+  const [joinRandom, setJoinRandom] = useState(true);
   const { activeDuel, duelTeams, trioTeams, duelSigned, trioSigned } = data;
 
   return (
-    <Window title="Arena Signup Console" width={600} height={400}>
+    <Window title="Arena Signup Console" width={700} height={400}>
       <Window.Content>
         {!!activeDuel && (
           <Section title="Active Duel">
@@ -116,15 +118,33 @@ export function RagecageConsole() {
             <Section
               title="Trio Participants"
               buttons={
-                !trioSigned ? (
-                  <Button color="good" onClick={() => act('trio_signup')}>
-                    Sign Up
-                  </Button>
-                ) : (
-                  <Button color="bad" onClick={() => act('trio_drop')}>
-                    Leave Queue
-                  </Button>
-                )
+                <Stack>
+                  <Stack.Item>
+                    {!trioSigned ? (
+                      <Button
+                        color="good"
+                        onClick={() =>
+                          act('trio_signup', { join_random: joinRandom })
+                        }
+                      >
+                        Sign Up
+                      </Button>
+                    ) : (
+                      <Button color="bad" onClick={() => act('trio_drop')}>
+                        Leave Queue
+                      </Button>
+                    )}
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Button.Checkbox
+                      checked={joinRandom}
+                      onClick={() => setJoinRandom(!joinRandom)}
+                      tooltip="Join other groups when there's enough players to start a fight?"
+                    >
+                      Join Groups
+                    </Button.Checkbox>
+                  </Stack.Item>
+                </Stack>
               }
               fill
             >

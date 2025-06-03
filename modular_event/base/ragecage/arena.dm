@@ -131,7 +131,7 @@
 				to_chat(user, span_alert("You've already signed up for a three on three fight!"))
 				return
 
-			trios += new /datum/duel_group(user, src)
+			trios += new /datum/duel_group(user, src, params["join_random"])
 			check_matches()
 
 		if ("duel_drop")
@@ -191,4 +191,81 @@
 			check_matches()
 
 /obj/machinery/computer/ragecage_signup/proc/check_matches()
-	return
+	if (prob(50))
+		if (!check_duel())
+			check_trio()
+	else if (!check_trio())
+		check_duel()
+
+/obj/machinery/computer/ragecage_signup/proc/check_duel()
+	if (length(duels) < 2)
+		return FALSE
+
+	var/datum/arena_duel/duel = new(src, duels[1], duels[2])
+	duels.Cut(1, 3)
+	return TRUE
+
+/obj/machinery/computer/ragecage_signup/proc/check_trio()
+	var/datum/duel_group/first_best = null
+	var/datum/duel_group/second_best = null
+	for (var/datum/duel_group/group as anything in trios)
+		if (length(group.members) > length(first_best?.members) || (length(group.members) == length(first_best?.members) && !first_best.join_random && group.join_random))
+			second_best = first_best
+			first_best = group
+		else if (length(group.members) > length(second_best?.members) || (length(group.members) == length(second_best?.members) && !second_best.join_random && group.join_random))
+			second_best = group
+
+	if (!first_best || !second_best)
+		return FALSE
+
+	if (length(first_best.members) == 3 && length(second_best.members) == 3)
+		var/datum/arena_duel/duel = new(src, first_best, second_best)
+		return TRUE
+
+	if (length(first_best.members) < 3 && !first_best.join_random)
+		first_best = null
+		for (var/datum/duel_group/group as anything in (trios - second_best))
+			if (length(group.members) > length(first_best?.members) && group.join_random)
+				first_best = group
+
+	if (length(second_best.members) < 3 && !second_best.join_random)
+		second_best = null
+		for (var/datum/duel_group/group as anything in (trios - first_best))
+			if (length(group.members) > length(second_best?.members) && group.join_random)
+				second_best = group
+
+	if (!first_best || !second_best)
+		return FALSE
+
+	var/list/datum/duel_group/first_merge = list()
+	var/list/datum/duel_group/second_merge = list()
+	var/first_miss = 3 - length(first_best.members)
+	var/second_miss = 3 - length(second_best.members)
+
+	for (var/datum/duel_group/group as anything in (trios - first_best - second_best))
+		if (!group.join_random)
+			continue
+
+		if (length(group.members) <= first_miss)
+			first_merge += group
+			first_miss -= length(group.members)
+		else if (length(group.members) <= second_miss)
+			second_merge += group
+			second_miss -= length(group.members)
+
+	if (first_miss || second_miss)
+		return FALSE
+
+	for (var/datum/duel_group/group as anything in first_merge)
+		first_best.members += group.members
+		group.members.Cut()
+		qdel(group)
+
+	for (var/datum/duel_group/group as anything in second_merge)
+		second_best.members += group.members
+		group.members.Cut()
+		qdel(group)
+
+	var/datum/arena_duel/duel = new(src, first_best, second_best)
+	return TRUE
+

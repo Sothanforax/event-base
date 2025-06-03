@@ -10,12 +10,15 @@
 	var/datum/arena_duel/active_duel = null
 	/// Console that created us
 	var/obj/machinery/computer/ragecage_signup/console = null
+	/// Should we join other groups when there's enough people to start a fight?
+	var/join_random = FALSE
 
-/datum/duel_group/New(mob/living/carbon/human/creator, obj/machinery/computer/ragecage_signup/new_console)
+/datum/duel_group/New(mob/living/carbon/human/creator, obj/machinery/computer/ragecage_signup/new_console, join_random = FALSE)
 	. = ..()
 	console = new_console
 	owner = creator
 	members += new /datum/duel_member(creator, src)
+	src.join_random = join_random
 
 /datum/duel_group/Destroy(force)
 	. = ..()
@@ -124,6 +127,7 @@
 	QDEL_NULL(first_group)
 	QDEL_NULL(second_group)
 	console.active_duel = null
+	console.check_matches()
 	console = null
 
 /datum/arena_duel/proc/start_fight()
