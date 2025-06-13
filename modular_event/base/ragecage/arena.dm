@@ -201,7 +201,7 @@
 	if (length(duels) < 2)
 		return FALSE
 
-	var/datum/arena_duel/duel = new(src, duels[1], duels[2])
+	new /datum/arena_duel(src, duels[1], duels[2])
 	duels.Cut(1, 3)
 	return TRUE
 
@@ -267,5 +267,7 @@
 		qdel(group)
 
 	var/datum/arena_duel/duel = new(src, first_best, second_best)
+	duels -= first_best
+	duels -= second_best
 	return TRUE
 

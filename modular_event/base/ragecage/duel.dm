@@ -63,7 +63,7 @@
 			belongings[thing] = owner.get_slot_by_item(thing)
 		else
 			belongings[thing] = thing.loc
-		RegisterSignal(thing, COMSIG_QDELETING, PROC_REF(on_delete))
+		RegisterSignal(thing, COMSIG_QDELETING, PROC_REF(on_delete), TRUE)
 
 /datum/duel_member/proc/on_delete(obj/item/deleted)
 	SIGNAL_HANDLER
@@ -73,12 +73,21 @@
 /datum/duel_member/proc/return_equipment()
 	var/turf/owner_turf = get_turf(owner)
 	for (var/obj/item/thing as anything in belongings)
+		if (get(thing, /mob) == owner)
+			continue
+
+		if (ismob(thing.loc))
+			owner.temporarilyRemoveItemFromInventory(thing)
+
 		if (!isatom(belongings[thing]))
 			if (!owner.equip_to_slot_if_possible(thing, belongings[thing]))
 				thing.forceMove(owner_turf)
 			continue
 
 		var/atom/storage = belongings[thing]
+		if (thing.loc == storage)
+			continue
+
 		if (!storage.atom_storage?.attempt_insert(thing, null, TRUE, STORAGE_FULLY_LOCKED, FALSE))
 			thing.forceMove(owner_turf)
 
@@ -89,15 +98,30 @@
 	store_equipment()
 	owner.revive(ADMIN_HEAL_ALL, force_grab_ghost = TRUE)
 	RegisterSignal(owner, COMSIG_MOB_STATCHANGE, PROC_REF(on_stat_changed))
+	new /obj/effect/temp_visual/dir_setting/ninja/cloak(get_turf(owner))
+	do_sparks(2, FALSE, owner)
+	owner.alpha = 0
 	owner.forceMove(get_turf(spawn_point))
+	owner.Immobilize(1 SECONDS, ignore_canstun = TRUE)
+	new /obj/effect/temp_visual/dir_setting/ninja(get_turf(owner))
+	do_sparks(2, FALSE, owner)
+	addtimer(CALLBACK(src, PROC_REF(finish_start)), 9)
+
+/datum/duel_member/proc/finish_start()
+	owner.alpha = 255
+	owner.SetImmobilized(0)
 
 /datum/duel_member/proc/end_duel(obj/effect/landmark/ragecage_exit/exit)
 	if (!exit)
 		stack_trace("Duel ended with no or not enough exit landmarks!")
 		exit = locate() in GLOB.landmarks_list // don't softlock people
 
+	do_sparks(2, FALSE, owner)
 	owner.revive(ADMIN_HEAL_ALL, force_grab_ghost = TRUE)
+	new /obj/effect/temp_visual/dir_setting/ninja/cloak(get_turf(owner))
 	owner.forceMove(get_turf(exit))
+	do_sparks(2, FALSE, owner)
+	new /obj/effect/temp_visual/dir_setting/ninja(get_turf(owner))
 	return_equipment()
 	UnregisterSignal(owner, COMSIG_MOB_STATCHANGE)
 
