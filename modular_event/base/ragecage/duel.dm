@@ -12,13 +12,16 @@
 	var/obj/machinery/computer/ragecage_signup/console = null
 	/// Should we join other groups when there's enough people to start a fight?
 	var/join_random = FALSE
+	/// Arena type picked by the owner
+	var/arena_type = "_random"
 
-/datum/duel_group/New(mob/living/carbon/human/creator, obj/machinery/computer/ragecage_signup/new_console, join_random = FALSE)
+/datum/duel_group/New(mob/living/carbon/human/creator, obj/machinery/computer/ragecage_signup/new_console, join_random = FALSE, arena_type = "_random")
 	. = ..()
 	console = new_console
 	owner = creator
 	members += new /datum/duel_member(creator, src)
 	src.join_random = join_random
+	src.arena_type = arena_type
 
 /datum/duel_group/Destroy(force)
 	. = ..()
@@ -141,8 +144,12 @@
 	. = ..()
 	console = new_console
 	first_group = first
-	first_group.active_duel = src
 	second_group = second
+	var/map_id = pick(first_group.arena_type, second_group.arena_type)
+	if (map_id == "_random")
+		map_id = pick(console.arena_types - "_random")
+	console.load_arena(map_id)
+	first_group.active_duel = src
 	second_group.active_duel = src
 	start_fight()
 
@@ -151,7 +158,7 @@
 	QDEL_NULL(first_group)
 	QDEL_NULL(second_group)
 	console.active_duel = null
-	console.check_matches()
+	INVOKE_ASYNC(console, TYPE_PROC_REF(/obj/machinery/computer/ragecage_signup, check_matches))
 	console = null
 
 /datum/arena_duel/proc/start_fight()

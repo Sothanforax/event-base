@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Icon, Section, Stack } from 'tgui-core/components';
+import { Button, Dropdown, Icon, Section, Stack } from 'tgui-core/components';
 import { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
@@ -12,6 +12,7 @@ type RagecageData = {
   joinRequestCooldown: BooleanLike;
   duelSigned: BooleanLike;
   trioSigned: BooleanLike;
+  arenaTypes: string[];
 };
 
 type RagecageDuel = {
@@ -23,6 +24,7 @@ type RagecageTeam = {
   members: DuelMember[];
   canJoin: BooleanLike;
   group?: string;
+  arenaType: string;
 };
 
 type DuelMember = {
@@ -51,14 +53,20 @@ export function DuelTeam(props: DuelTeamProps) {
           </Button>
         )
       }
-      title={`${team.members.find((x) => x.owner)?.name}'s Team`}
+      title={`${team.members.find((x) => x.owner)?.name}'s Team - ${team.arenaType}`}
     >
       <Stack fill vertical zebra>
         {team.members.map((member) => (
           <Stack.Item key={member.name} textColor={!!member.dead && 'dimgrey'}>
             {member.name}
             {trio && !!member.owner && (
-              <Icon name="crown" color="gold" mr={2} ml={1} />
+              <Icon
+                name="crown"
+                color="gold"
+                mr={2}
+                ml={1}
+                style={{ float: 'right' }}
+              />
             )}
           </Stack.Item>
         ))}
@@ -69,11 +77,21 @@ export function DuelTeam(props: DuelTeamProps) {
 
 export function RagecageConsole() {
   const { data, act } = useBackend<RagecageData>();
+  const {
+    activeDuel,
+    duelTeams,
+    trioTeams,
+    duelSigned,
+    trioSigned,
+    arenaTypes,
+  } = data;
   const [joinRandom, setJoinRandom] = useState(true);
-  const { activeDuel, duelTeams, trioTeams, duelSigned, trioSigned } = data;
+  const [chosenArena, setChosenArena] = useState(
+    arenaTypes[arenaTypes.length - 1],
+  );
 
   return (
-    <Window title="Arena Signup Console" width={700} height={400}>
+    <Window title="Arena Signup Console" width={900} height={400}>
       <Window.Content>
         {!!activeDuel && (
           <Section title="Active Duel">
@@ -97,15 +115,29 @@ export function RagecageConsole() {
             <Section
               title="Duel Participants"
               buttons={
-                !duelSigned ? (
-                  <Button color="good" onClick={() => act('duel_signup')}>
-                    Sign Up
-                  </Button>
-                ) : (
-                  <Button color="bad" onClick={() => act('duel_drop')}>
-                    Leave Queue
-                  </Button>
-                )
+                <Stack>
+                  {!duelSigned ? (
+                    <Button
+                      color="good"
+                      onClick={() =>
+                        act('duel_signup', { arena_type: chosenArena })
+                      }
+                    >
+                      Sign Up
+                    </Button>
+                  ) : (
+                    <Button color="bad" onClick={() => act('duel_drop')}>
+                      Leave Queue
+                    </Button>
+                  )}
+                  <Stack.Item>
+                    <Dropdown
+                      selected={chosenArena}
+                      onSelected={(value) => setChosenArena(value)}
+                      options={arenaTypes}
+                    />
+                  </Stack.Item>
+                </Stack>
               }
               fill
             >
@@ -124,7 +156,10 @@ export function RagecageConsole() {
                       <Button
                         color="good"
                         onClick={() =>
-                          act('trio_signup', { join_random: joinRandom })
+                          act('trio_signup', {
+                            join_random: joinRandom,
+                            arena_type: chosenArena,
+                          })
                         }
                       >
                         Sign Up
