@@ -1975,10 +1975,6 @@
 	},
 /turf/open/floor/plating,
 /area/station/engineering/atmos)
-"GJ" = (
-/obj/effect/spawner/structure/window/reinforced,
-/turf/closed/wall/r_wall,
-/area/station/engineering/gravity_generator)
 "GN" = (
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
 	dir = 4
@@ -7945,7 +7941,7 @@ aa
 aa
 aa
 ak
-GJ
+ak
 Lb
 aX
 Qi
