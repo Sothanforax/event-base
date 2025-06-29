@@ -592,10 +592,6 @@
 /obj/machinery/door/airlock,
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
-"dI" = (
-/obj/effect/landmark/start,
-/turf/open/floor/iron,
-/area/station/commons/storage/primary)
 "dJ" = (
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
@@ -1214,6 +1210,13 @@
 /obj/machinery/vending/subtype_vendor,
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
+"km" = (
+/obj/machinery/navbeacon{
+	codes_txt = "patrol;next_patrol=1-Southwest";
+	location = "4-Southeast"
+	},
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "kn" = (
 /obj/machinery/light/directional/north,
 /turf/open/floor/iron,
@@ -1327,13 +1330,6 @@
 	},
 /turf/open/floor/iron,
 /area/station/cargo/storage)
-"pY" = (
-/obj/machinery/navbeacon{
-	codes_txt = "patrol;next_patrol=1-Southwest";
-	location = "4-Southeast"
-	},
-/turf/open/floor/iron,
-/area/station/commons/storage/primary)
 "pZ" = (
 /obj/machinery/light/directional/north,
 /obj/machinery/camera/directional/north,
@@ -1391,14 +1387,6 @@
 "qQ" = (
 /turf/open/floor/engine,
 /area/station/cargo/miningoffice)
-"qR" = (
-/obj/effect/landmark/start,
-/obj/machinery/navbeacon{
-	codes_txt = "delivery;dir=4";
-	location = "Center"
-	},
-/turf/open/floor/iron,
-/area/station/commons/storage/primary)
 "rh" = (
 /obj/machinery/door/airlock,
 /obj/structure/cable,
@@ -1479,6 +1467,14 @@
 /obj/structure/bot,
 /turf/open/floor/iron/dark,
 /area/station/science/explab)
+"tX" = (
+/obj/effect/landmark/start,
+/obj/machinery/navbeacon{
+	codes_txt = "delivery;dir=4";
+	location = "Center"
+	},
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "uf" = (
 /obj/structure/fans/tiny/invisible,
 /obj/effect/turf_decal/stripes/line{
@@ -1668,12 +1664,6 @@
 /obj/structure/cable,
 /turf/open/floor/iron,
 /area/station/cargo/miningoffice)
-"yl" = (
-/obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
-	dir = 4
-	},
-/turf/open/floor/iron,
-/area/station/commons/storage/primary)
 "yA" = (
 /obj/docking_port/stationary/laborcamp_home{
 	dir = 8
@@ -2186,6 +2176,10 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /turf/open/floor/iron,
 /area/station/engineering/main)
+"Md" = (
+/obj/effect/landmark/start,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "Mg" = (
 /obj/machinery/door/airlock/public/glass,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
@@ -2584,6 +2578,10 @@
 /obj/effect/spawner/structure/window/reinforced,
 /turf/open/floor/plating,
 /area/station/engineering/atmos)
+"Wl" = (
+/obj/effect/landmark/blobstart,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "WK" = (
 /obj/structure/money_bot,
 /turf/open/floor/iron/dark,
@@ -2668,10 +2666,6 @@
 /obj/machinery/light/directional/north,
 /turf/open/floor/plating,
 /area/station/engineering/atmos)
-"XZ" = (
-/obj/effect/landmark/blobstart,
-/turf/open/floor/iron,
-/area/station/commons/storage/primary)
 "Yd" = (
 /turf/open/floor/iron,
 /area/station/cargo/bitrunning/den)
@@ -2686,6 +2680,12 @@
 	},
 /turf/open/floor/iron/dark,
 /area/station/science/explab)
+"Ys" = (
+/obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
+	dir = 4
+	},
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "Yt" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden,
 /obj/machinery/meter,
@@ -7592,7 +7592,7 @@ dq
 dJ
 dJ
 dJ
-dI
+Md
 dJ
 dJ
 dJ
@@ -7684,7 +7684,7 @@ dr
 dJ
 dJ
 dJ
-dI
+Md
 dJ
 dJ
 dJ
@@ -7776,7 +7776,7 @@ ds
 dJ
 dJ
 dJ
-dI
+Md
 dJ
 dJ
 dJ
@@ -7868,9 +7868,9 @@ dt
 dJ
 dD
 dJ
-qR
+tX
 dJ
-XZ
+Wl
 dJ
 dJ
 dJ
@@ -7960,7 +7960,7 @@ du
 dJ
 dJ
 dJ
-dI
+Md
 dJ
 dJ
 dJ
@@ -8052,7 +8052,7 @@ dv
 dJ
 dJ
 dJ
-dI
+Md
 dJ
 dJ
 dJ
@@ -8144,7 +8144,7 @@ dw
 dJ
 dJ
 dJ
-dI
+Md
 dJ
 dJ
 dJ
@@ -8236,11 +8236,11 @@ dJ
 JJ
 dJ
 dJ
-yl
+Ys
 dJ
 dJ
 dJ
-pY
+km
 dJ
 dJ
 cS
